@@ -130,6 +130,94 @@ PYTHONPATH=python python3 -m sportsdata.validators.cli \
 
 For swimming tracking CSVs, `eventId` is an annotation event id such as `dive`, `cycle`, or `finish` from `models/catalogs/swimming/annotation-events.json`.
 
+### ALEXIS_ Table Tennis Files
+
+Table tennis match data follows a naming convention using player names: `ALEXIS-LEBRUN_vs_FAN-ZHENDONG_*`. Each match consists of four related files:
+
+#### 1. Game Metadata JSON (`*_game.json`)
+
+Contains match-level information such as player names, handedness, grips, event type, and creation metadata.
+
+**Required fields:**
+- `playerA`, `playerB`: Player names (string)
+- `droitier_gaucher_joueurA`, `droitier_gaucher_joueurB`: Handedness - `droitier` (right-handed) or `gaucher` (left-handed)
+- `prise_joueurA`, `prise_joueurB`: Grip type (string, e.g., `europeenne`)
+- `date`: Match date in ISO 8601 format (YYYY-MM-DD)
+- `epreuve`: Event type (string, e.g., `simple`)
+- `fps`: Frames per second (number)
+
+#### 2. Table Info JSON (`*_infos_table.json`)
+
+Contains table detection metadata including corners, colors, and media paths.
+
+**Required fields:**
+- `x1-x4`, `y1-y4`: Table corner coordinates (numbers)
+- `couleur_mediane_r/g/b`: Median table color RGB values (0-255)
+- `couleur_moyenne_r/g/b`: Average table color RGB values (0-255)
+- `perimetre`: Table perimeter in pixels (number)
+- `aire`: Table area in pixels (number)
+- `match`: Match identifier (string)
+- `competition`: Competition name (string)
+- `chemin_image`: URL or path to full table image
+- `chemin_image_projetee`: URL or path to top-down projection image
+- `chemin_image_projetee_cote`: URL or path to side projection image
+
+#### 3. Perspective JSON (`*_perspective.json`)
+
+Contains calibration and homography data for 3D perspective mapping.
+
+**Structure:**
+- `calibration.srcPct1`: Array of 4 source points with x/y coordinates as percentages (0-100)
+- `calibration.destPct1`: Array of 4 destination points with x/y coordinates as percentages
+- `homography.srcPts`: Array of 4 source points in pixels
+- `homography.destPts`: Array of 4 destination points in pixels
+
+#### 4. Annotation CSV (`*_annotation.csv`)
+
+Contains shot-level annotations with player actions and ball tracking.
+
+**Required columns:**
+- `nom`: Player name (string)
+- `debut`, `fin`: Frame range (integers)
+- `genre`: Player gender (string, e.g., `garcon`, `fille`)
+- `lateralite`: Shot handedness (`coup_droit`, `revers`, etc.)
+- `set`: Set number (integer, 1-based)
+- `systeme`: System classification (string, e.g., `att/att`)
+- `coup`: Shot type or player identifier (string)
+- `type_service`: Service type if applicable (string, optional)
+- `type_coup`: Shot classification (string, optional)
+- `zone_jeu`: Game zone (string, e.g., `g1`, `m2`, `d3`)
+- `faute`: Fault or point outcome (string, optional)
+- `effet_coup`: Shot spin/effect (string, optional)
+- `coor_balle_x/y/z`: Ball coordinates at contact (numbers)
+- `joueur_frappe`: Player executing the shot (string)
+- `joueur_sur`: Opponent/player receiving (string)
+- `coor_frappe_x/y/z`: Racket/hand coordinates at contact (numbers)
+- `time_frappe`: Frame time (integer)
+- `premier_rebond_x/y/z`: First bounce coordinates (numbers, optional)
+- `time_premier_rebond`: First bounce frame time (integer, optional)
+- `probleme_annotation`: Annotation issues (string, optional)
+
+**Validation example:**
+
+Validate individual ALEXIS files by file type:
+
+```sh
+PYTHONPATH=python python3 -m sportsdata.validators.cli \
+  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_game.json
+```
+
+Validate all related ALEXIS files together:
+
+```sh
+cd /Users/rvuillem/dev/sportsdata
+PYTHONPATH=python python3 -m sportsdata.validators.cli \
+  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_game.json \
+  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_infos_table.json \
+  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_perspective.json \
+  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_annotation.csv
+```
+
 For applications outside this checkout, set `SPORTSDATA_MODELS_ROOT` to the included repository's `models/` directory and put the included repository's `python/` directory on `PYTHONPATH` before loading catalogs or validators.
 
 ```sh
