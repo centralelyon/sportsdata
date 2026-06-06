@@ -46,3 +46,18 @@ export function toSelectOptions(catalog: Catalog): Array<{ value: string; label:
     label: item.label ?? item.id,
   }));
 }
+
+export function toJsonValueOptions(
+  catalog: Catalog,
+  jsonValueField = "id",
+): Array<{ value: string; label: string; sourceId: string }> {
+  return catalog.values.map((item) => {
+    const rawValue = item[jsonValueField] ?? item.id;
+    const value = String(rawValue);
+    return {
+      value,
+      label: item.label ?? value,
+      sourceId: item.id,
+    };
+  });
+}

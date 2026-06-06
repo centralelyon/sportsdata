@@ -1,0 +1,22 @@
+{
+  "id": "swimming.rounds",
+  "title": "Swimming rounds",
+  "values": [
+    {
+      "id": "series",
+      "label": "Heats"
+    },
+    {
+      "id": "semifinale",
+      "label": "Semifinal"
+    },
+    {
+      "id": "finaleA",
+      "label": "Final A"
+    },
+    {
+      "id": "finaleB",
+      "label": "Final B"
+    }
+  ]
+}

@@ -1,8 +1,11 @@
 [project]
-name = "sportsdata-models"
+name = "sportsdata"
 version = "0.1.0"
 description = "Shared catalogs, schemas, derivations, and validators for sports data files."
 requires-python = ">=3.10"
+
+[project.scripts]
+sportsdata-validate = "sportsdata.validators.cli:main"
 
 [build-system]
 requires = ["setuptools>=61"]
