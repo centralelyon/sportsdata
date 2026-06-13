@@ -12,11 +12,16 @@ from sportsdata_models.validators.files import validate_loaded
 
 
 SAMPLE = ROOT / "samples" / "swimming" / "valid" / "2024-JO_Paris_freestyle_hommes_100_finaleA.json"
+NO_VIDEO_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "basic_tracking.json"
 
 
 class SwimmingEventConfigTests(unittest.TestCase):
     def test_sample_is_valid(self):
         issues = validate_loaded(load_json(SAMPLE), "swimming-event-config")
+        self.assertEqual([], issues)
+
+    def test_basic_tracking_sample_without_video_is_valid(self):
+        issues = validate_loaded(load_json(NO_VIDEO_SAMPLE), "swimming-event-config")
         self.assertEqual([], issues)
 
     def test_rejects_unknown_stroke(self):

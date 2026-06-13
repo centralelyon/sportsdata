@@ -1,0 +1,75 @@
+{
+  "distance": "50",
+  "epreuve": "series",
+  "nage": "freestyle",
+  "sexe": "hommes",
+  "name": "basic_tracking",
+  "city": "Sample",
+  "cup": "TEST",
+  "ncamera": 0,
+  "one_is_up": false,
+  "start_side": "left",
+  "taille_piscine": [
+    50,
+    25
+  ],
+  "lignes": {
+    "ligne1": "Ligne 1",
+    "ligne2": "Ligne 2",
+    "ligne3": "Ligne 3",
+    "ligne4": "Ligne 4",
+    "ligne5": "Ligne 5",
+    "ligne6": "Ligne 6",
+    "ligne7": "Ligne 7",
+    "ligne8": "Ligne 8"
+  },
+  "nageuses": [
+    "Ligne 4"
+  ],
+  "videos": [],
+  "annotation_simple": {
+    "sport": "swimming",
+    "fieldPresetId": "swimming_olympic",
+    "referenceCorner": "tl",
+    "fps": 25,
+    "startMoment": 0,
+    "startSide": "left",
+    "entities": [
+      {
+        "key": "ligne4",
+        "name": "Ligne 4",
+        "lane": "ligne4",
+        "swimmerId": 1
+      }
+    ],
+    "events": [
+      "dive",
+      "cycle",
+      "finish"
+    ],
+    "perspective": {
+      "corners": {
+        "tl": {
+          "x": 0,
+          "y": 0
+        },
+        "tr": {
+          "x": 50,
+          "y": 0
+        },
+        "br": {
+          "x": 50,
+          "y": 25
+        },
+        "bl": {
+          "x": 0,
+          "y": 25
+        }
+      }
+    },
+    "annotations": {}
+  },
+  "tracking": {
+    "calib_video": {}
+  }
+}
