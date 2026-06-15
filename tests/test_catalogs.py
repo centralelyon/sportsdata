@@ -25,6 +25,7 @@ class CatalogTests(unittest.TestCase):
             ("swimming", "field-presets"),
             ("swimming", "annotation-events"),
             ("table-tennis", "clip-patterns"),
+            ("table-tennis", "annotation-events"),
         ]
         for scope, name in catalogs:
             with self.subTest(scope=scope, name=name):

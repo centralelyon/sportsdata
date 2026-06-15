@@ -15,6 +15,7 @@ from .schema import ValidationIssue
 
 
 BASIC_TRACKING_COLUMNS = ["frameId", "swimmerId", "eventId", "time", "distance"]
+TABLE_TENNIS_BASIC_TRACKING_COLUMNS = ["frameId", "playerId", "eventId", "time", "x", "y", "z"]
 SWIMMING_TRACKING_COLUMNS = [
     "frameId",
     "swimmerId",
@@ -39,6 +40,8 @@ CSV_FORMAT_RULES = {
     "formats.csv.swimming-basic-tracking": MODELS_ROOT / "rules" / "swimming" / "basic-tracking-csv.rules.json",
     "swimming-tracking-csv": MODELS_ROOT / "rules" / "swimming" / "tracking-csv.rules.json",
     "formats.csv.swimming-tracking": MODELS_ROOT / "rules" / "swimming" / "tracking-csv.rules.json",
+    "table-tennis-basic-tracking-csv": MODELS_ROOT / "rules" / "table-tennis" / "basic-tracking-csv.rules.json",
+    "formats.csv.table-tennis-basic-tracking": MODELS_ROOT / "rules" / "table-tennis" / "basic-tracking-csv.rules.json",
 }
 
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
@@ -57,6 +60,8 @@ def detect_csv_format(path: str | Path) -> str:
         return "swimming-tracking-csv"
     if _has_columns(headers, BASIC_TRACKING_COLUMNS):
         return "swimming-basic-tracking-csv"
+    if _has_columns(headers, TABLE_TENNIS_BASIC_TRACKING_COLUMNS):
+        return "table-tennis-basic-tracking-csv"
     return "unknown"
 
 

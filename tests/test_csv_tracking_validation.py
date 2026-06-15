@@ -14,8 +14,10 @@ from sportsdata_models.validators.schema import validate_schema
 
 
 BASIC_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "basic_tracking.csv"
+TABLE_TENNIS_BASIC_SAMPLE = ROOT / "samples" / "table-tennis" / "valid" / "basic_tracking.csv"
 TRACKING_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "exemple_annotation_ligne_5_cycles.csv"
 BASIC_RULES = ROOT / "models" / "rules" / "swimming" / "basic-tracking-csv.rules.json"
+TABLE_TENNIS_BASIC_RULES = ROOT / "models" / "rules" / "table-tennis" / "basic-tracking-csv.rules.json"
 TRACKING_RULES = ROOT / "models" / "rules" / "swimming" / "tracking-csv.rules.json"
 CSV_RULES_SCHEMA = ROOT / "models" / "schemas" / "common" / "csv-rules.schema.json"
 
@@ -24,12 +26,15 @@ class CsvTrackingValidationTests(unittest.TestCase):
     def test_basic_sample_is_valid(self):
         self.assertEqual([], validate_file(BASIC_SAMPLE))
 
+    def test_table_tennis_basic_sample_is_valid(self):
+        self.assertEqual([], validate_file(TABLE_TENNIS_BASIC_SAMPLE))
+
     def test_full_tracking_sample_is_valid(self):
         self.assertEqual([], validate_file(TRACKING_SAMPLE, "swimming-tracking-csv"))
 
     def test_csv_rule_files_match_schema(self):
         schema = load_json(CSV_RULES_SCHEMA)
-        for rules_path in [BASIC_RULES, TRACKING_RULES]:
+        for rules_path in [BASIC_RULES, TABLE_TENNIS_BASIC_RULES, TRACKING_RULES]:
             with self.subTest(rules_path=rules_path):
                 self.assertEqual([], validate_schema(load_json(rules_path), schema))
 
