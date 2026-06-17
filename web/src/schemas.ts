@@ -2,6 +2,7 @@ export const schemaPaths = {
   common: {
     media: "models/schemas/common/media.schema.json",
     geometry: "models/schemas/common/geometry.schema.json",
+    camera: "models/schemas/common/camera.schema.json",
     annotationSimple: "models/schemas/common/annotation-simple.schema.json",
   },
   swimming: {

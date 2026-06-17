@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+import json
+import os
 import re
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
+
+
+REPO_ROOT = Path(os.environ.get("SPORTSDATA_REPO_ROOT", Path(__file__).resolve().parents[3]))
 
 
 @dataclass(frozen=True)
@@ -18,7 +25,29 @@ class ValidationIssue:
 
 
 def validate_schema(instance: Any, schema: dict[str, Any], path: str = "$") -> list[ValidationIssue]:
+    return _validate_schema(instance, schema, path, schema)
+
+
+def _validate_schema(
+    instance: Any,
+    schema: dict[str, Any],
+    path: str,
+    root_schema: dict[str, Any],
+) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
+    if "$ref" in schema:
+        referenced_schema, referenced_root = _resolve_ref(schema["$ref"], schema, root_schema)
+        issues.extend(_validate_schema(instance, referenced_schema, path, referenced_root))
+
+        sibling_schema = {
+            key: value
+            for key, value in schema.items()
+            if key not in {"$ref", "$schema", "$id", "title", "description"}
+        }
+        if sibling_schema:
+            issues.extend(_validate_schema(instance, sibling_schema, path, root_schema))
+        return issues
+
     expected_type = schema.get("type")
 
     if expected_type is not None and not _matches_type(instance, expected_type):
@@ -30,9 +59,9 @@ def validate_schema(instance: Any, schema: dict[str, Any], path: str = "$") -> l
         issues.append(ValidationIssue(path, f"expected one of {values}"))
 
     if isinstance(instance, dict):
-        issues.extend(_validate_object(instance, schema, path))
+        issues.extend(_validate_object(instance, schema, path, root_schema))
     elif isinstance(instance, list):
-        issues.extend(_validate_array(instance, schema, path))
+        issues.extend(_validate_array(instance, schema, path, root_schema))
     elif isinstance(instance, str):
         issues.extend(_validate_string(instance, schema, path))
     elif isinstance(instance, (int, float)) and not isinstance(instance, bool):
@@ -41,7 +70,69 @@ def validate_schema(instance: Any, schema: dict[str, Any], path: str = "$") -> l
     return issues
 
 
-def _validate_object(instance: dict[str, Any], schema: dict[str, Any], path: str) -> list[ValidationIssue]:
+def _resolve_ref(
+    ref: str,
+    current_schema: dict[str, Any],
+    root_schema: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    ref_path, _, fragment = ref.partition("#")
+    if not ref_path:
+        return _resolve_json_pointer(root_schema, fragment), root_schema
+
+    schema_path = _resolve_ref_path(ref_path, current_schema)
+    referenced_root = _load_schema(schema_path)
+    referenced_schema = _resolve_json_pointer(referenced_root, fragment)
+    return referenced_schema, referenced_root
+
+
+def _resolve_ref_path(ref_path: str, current_schema: dict[str, Any]) -> Path:
+    path = Path(ref_path)
+    if path.is_absolute():
+        return path
+    if ref_path.startswith("models/"):
+        return REPO_ROOT / ref_path
+
+    schema_id = current_schema.get("$id")
+    if isinstance(schema_id, str) and schema_id.startswith("models/"):
+        return (REPO_ROOT / schema_id).parent / ref_path
+    return REPO_ROOT / ref_path
+
+
+@lru_cache(maxsize=128)
+def _load_schema(path: Path) -> dict[str, Any]:
+    with path.open("r", encoding="utf-8") as handle:
+        loaded = json.load(handle)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Referenced schema {path} is not an object")
+    return loaded
+
+
+def _resolve_json_pointer(schema: dict[str, Any], fragment: str) -> dict[str, Any]:
+    if fragment == "":
+        return schema
+    if not fragment.startswith("/"):
+        raise ValueError(f"Unsupported schema reference fragment: #{fragment}")
+
+    target: Any = schema
+    for raw_part in fragment.removeprefix("/").split("/"):
+        part = raw_part.replace("~1", "/").replace("~0", "~")
+        if isinstance(target, dict):
+            target = target[part]
+        elif isinstance(target, list):
+            target = target[int(part)]
+        else:
+            raise ValueError(f"Schema reference fragment does not resolve to an object: #{fragment}")
+    if not isinstance(target, dict):
+        raise ValueError(f"Schema reference fragment does not resolve to an object: #{fragment}")
+    return target
+
+
+def _validate_object(
+    instance: dict[str, Any],
+    schema: dict[str, Any],
+    path: str,
+    root_schema: dict[str, Any],
+) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     properties = schema.get("properties", {})
 
@@ -51,7 +142,7 @@ def _validate_object(instance: dict[str, Any], schema: dict[str, Any], path: str
 
     for key, child_schema in properties.items():
         if key in instance:
-            issues.extend(validate_schema(instance[key], child_schema, f"{path}.{key}"))
+            issues.extend(_validate_schema(instance[key], child_schema, f"{path}.{key}", root_schema))
 
     if schema.get("additionalProperties") is False:
         allowed = set(properties)
@@ -62,7 +153,12 @@ def _validate_object(instance: dict[str, Any], schema: dict[str, Any], path: str
     return issues
 
 
-def _validate_array(instance: list[Any], schema: dict[str, Any], path: str) -> list[ValidationIssue]:
+def _validate_array(
+    instance: list[Any],
+    schema: dict[str, Any],
+    path: str,
+    root_schema: dict[str, Any],
+) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     min_items = schema.get("minItems")
     max_items = schema.get("maxItems")
@@ -75,7 +171,7 @@ def _validate_array(instance: list[Any], schema: dict[str, Any], path: str) -> l
     item_schema = schema.get("items")
     if item_schema:
         for index, item in enumerate(instance):
-            issues.extend(validate_schema(item, item_schema, f"{path}[{index}]"))
+            issues.extend(_validate_schema(item, item_schema, f"{path}[{index}]", root_schema))
 
     return issues
 

@@ -7,6 +7,28 @@
   "city": "Sample",
   "cup": "TEST",
   "ncamera": 0,
+  "camera": {
+    "fov": 55,
+    "aspect": 1.777778,
+    "near": 0.01,
+    "far": 1000,
+    "position": [
+      25,
+      17,
+      -25
+    ],
+    "target": [
+      25,
+      0,
+      10
+    ],
+    "up": [
+      0,
+      1,
+      0
+    ],
+    "roll": 0
+  },
   "one_is_up": false,
   "start_side": "left",
   "taille_piscine": [

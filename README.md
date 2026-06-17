@@ -200,22 +200,27 @@ Contains shot-level annotations with player actions and ball tracking.
 
 **Validation example:**
 
-Validate individual ALEXIS files by file type:
+Validate individual basic files by file type:
 
 ```sh
 PYTHONPATH=python python3 -m sportsdata.validators.cli \
-  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_game.json
+  samples/table-tennis/valid/basic_game.json
 ```
 
-Validate all related ALEXIS files together:
+Validate basic table-tennis samples together:
 
 ```sh
 cd /Users/rvuillem/dev/sportsdata
 PYTHONPATH=python python3 -m sportsdata.validators.cli \
-  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_game.json \
-  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_infos_table.json \
-  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_perspective.json \
-  samples/table-tennis/valid/ALEXIS-LEBRUN_vs_FAN-ZHENDONG_annotation.csv
+  samples/table-tennis/valid/basic_game.json \
+  samples/table-tennis/valid/basic_tracking.csv \
+  samples/table-tennis/valid/flat_match.json
+```
+
+Command:
+
+```sh
+PYTHONPATH=python python3 -m sportsdata.validators.cli samples/table-tennis/valid/basic_game.json
 ```
 
 For applications outside this checkout, set `SPORTSDATA_MODELS_ROOT` to the included repository's `models/` directory and put the included repository's `python/` directory on `PYTHONPATH` before loading catalogs or validators.

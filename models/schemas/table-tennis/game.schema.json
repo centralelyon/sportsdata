@@ -81,6 +81,9 @@
             "type": "number",
             "minimum": 0,
             "exclusiveMinimum": true
+        },
+        "camera": {
+            "$ref": "models/schemas/common/camera.schema.json"
         }
     },
     "additionalProperties": false
