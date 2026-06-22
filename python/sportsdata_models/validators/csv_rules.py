@@ -34,7 +34,7 @@ SWIMMING_TRACKING_COLUMNS = [
     "amplitude (m)",
     "vitesse (m/s)",
 ]
-SWIMFLOW_COLUMNS = [
+SWIMFLOW_DETECTION_COLUMNS = [
     "frameId",
     "xa_above",
     "xb_above",
@@ -58,18 +58,13 @@ SWIMFLOW_COLUMNS = [
     "result",
     "world",
     "world50",
-    "world100",
     "olympic",
     "olympic50",
-    "olympic100",
     "personal",
     "personal50",
-    "personal100",
     "national",
     "national50",
-    "national100",
     "currentLap50",
-    "currentLap100",
     "averageLap",
     "elapsed",
     "speed",
@@ -111,7 +106,7 @@ class CsvRow:
 
 def detect_csv_format(path: str | Path) -> str:
     headers = _read_headers(path)
-    if _has_columns(headers, SWIMFLOW_COLUMNS):
+    if _has_columns(headers, SWIMFLOW_DETECTION_COLUMNS):
         return "swimflow-csv"
     if _has_columns(headers, SWIMMING_TRACKING_COLUMNS):
         return "swimming-tracking-csv"
