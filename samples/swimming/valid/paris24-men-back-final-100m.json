@@ -1,0 +1,59 @@
+{
+  "name": "paris24-men-back-final-100m",
+  "lanes": 8,
+  "raceStartTime": 46.68,
+  "dataCSV": "paris24-men-back-final-100m.csv",
+  "framerate": 50,
+  "distance": 100,
+  "poolLapLength": 50,
+  "gender": "men",
+  "year": 2024,
+  "type": "individual",
+  "style": "backstroke",
+  "level": "Olympic",
+  "videoName": "paris24-men-back-final-100m",
+  "video": "video/zip-2024_JO_Paris_dos_hommes_100_finaleA_from_above.mp4",
+  "note": "paris24-men-back-final-100m",
+  "swimmersInfo": [
+    {
+      "name": "MORGAN Oliver",
+      "nationality": "GBR",
+      "swimmerId": 0
+    },
+    {
+      "name": "MURPHY Ryan",
+      "nationality": "USA",
+      "swimmerId": 1
+    },
+    {
+      "name": "NDOYE-BROUARD Yohann",
+      "nationality": "FRA",
+      "swimmerId": 2
+    },
+    {
+      "name": "XU Jiayu",
+      "nationality": "CHN",
+      "swimmerId": 3
+    },
+    {
+      "name": "CECCON Thomas",
+      "nationality": "ITA",
+      "swimmerId": 4
+    },
+    {
+      "name": "COETZE Pieter",
+      "nationality": "RSA",
+      "swimmerId": 5
+    },
+    {
+      "name": "CHRISTOU Apostolos",
+      "nationality": "GRE",
+      "swimmerId": 6
+    },
+    {
+      "name": "GONZALEZ DE OLIVEIRA Hugo",
+      "nationality": "ESP",
+      "swimmerId": 7
+    }
+  ]
+}

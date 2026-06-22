@@ -34,8 +34,63 @@ SWIMMING_TRACKING_COLUMNS = [
     "amplitude (m)",
     "vitesse (m/s)",
 ]
+SWIMFLOW_COLUMNS = [
+    "frameId",
+    "xa_above",
+    "xb_above",
+    "x_middle",
+    "event",
+    "swimmerId",
+    "strokeCount",
+    "strokeDistance",
+    "x_world",
+    "speed_world",
+    "x_olympic",
+    "speed_olympic",
+    "x_personal",
+    "speed_personal",
+    "x_national",
+    "speed_national",
+    "resultS",
+    "nationality",
+    "name",
+    "age",
+    "result",
+    "world",
+    "world50",
+    "world100",
+    "olympic",
+    "olympic50",
+    "olympic100",
+    "personal",
+    "personal50",
+    "personal100",
+    "national",
+    "national50",
+    "national100",
+    "currentLap50",
+    "currentLap100",
+    "averageLap",
+    "elapsed",
+    "speed",
+    "acceleration",
+    "averageSpeed",
+    "distanceSwam",
+    "distanceRemaining",
+    "distanceToLeader",
+    "estimatedCompletionTime",
+    "nextPassing",
+    "winner",
+    "reaction",
+    "diving",
+    "direction",
+    "currentLeader",
+]
 
 CSV_FORMAT_RULES = {
+    "swimflow-csv": MODELS_ROOT / "rules" / "swimming" / "swimflow-csv.rules.json",
+    "swimming-swimflow-csv": MODELS_ROOT / "rules" / "swimming" / "swimflow-csv.rules.json",
+    "formats.csv.swimflow": MODELS_ROOT / "rules" / "swimming" / "swimflow-csv.rules.json",
     "swimming-basic-tracking-csv": MODELS_ROOT / "rules" / "swimming" / "basic-tracking-csv.rules.json",
     "formats.csv.swimming-basic-tracking": MODELS_ROOT / "rules" / "swimming" / "basic-tracking-csv.rules.json",
     "swimming-tracking-csv": MODELS_ROOT / "rules" / "swimming" / "tracking-csv.rules.json",
@@ -56,6 +111,8 @@ class CsvRow:
 
 def detect_csv_format(path: str | Path) -> str:
     headers = _read_headers(path)
+    if _has_columns(headers, SWIMFLOW_COLUMNS):
+        return "swimflow-csv"
     if _has_columns(headers, SWIMMING_TRACKING_COLUMNS):
         return "swimming-tracking-csv"
     if _has_columns(headers, BASIC_TRACKING_COLUMNS):

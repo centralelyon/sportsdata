@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
 from sportsdata_models.catalogs import load_json
+from sportsdata_models.validators.csv_rules import detect_csv_format
 from sportsdata_models.validators.files import validate_file
 from sportsdata_models.validators.schema import validate_schema
 
@@ -16,9 +17,11 @@ from sportsdata_models.validators.schema import validate_schema
 BASIC_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "basic_tracking.csv"
 TABLE_TENNIS_BASIC_SAMPLE = ROOT / "samples" / "table-tennis" / "valid" / "basic_tracking.csv"
 TRACKING_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "exemple_annotation_ligne_5_cycles.csv"
+SWIMFLOW_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "paris24-men-back-final-100m.csv"
 BASIC_RULES = ROOT / "models" / "rules" / "swimming" / "basic-tracking-csv.rules.json"
 TABLE_TENNIS_BASIC_RULES = ROOT / "models" / "rules" / "table-tennis" / "basic-tracking-csv.rules.json"
 TRACKING_RULES = ROOT / "models" / "rules" / "swimming" / "tracking-csv.rules.json"
+SWIMFLOW_RULES = ROOT / "models" / "rules" / "swimming" / "swimflow-csv.rules.json"
 CSV_RULES_SCHEMA = ROOT / "models" / "schemas" / "common" / "csv-rules.schema.json"
 
 
@@ -32,9 +35,16 @@ class CsvTrackingValidationTests(unittest.TestCase):
     def test_full_tracking_sample_is_valid(self):
         self.assertEqual([], validate_file(TRACKING_SAMPLE, "swimming-tracking-csv"))
 
+    def test_swimflow_sample_is_detected_and_valid(self):
+        self.assertEqual("swimflow-csv", detect_csv_format(SWIMFLOW_SAMPLE))
+        self.assertEqual([], validate_file(SWIMFLOW_SAMPLE))
+
+    def test_swimflow_format_declaration_id_is_valid(self):
+        self.assertEqual([], validate_file(SWIMFLOW_SAMPLE, "formats.csv.swimflow"))
+
     def test_csv_rule_files_match_schema(self):
         schema = load_json(CSV_RULES_SCHEMA)
-        for rules_path in [BASIC_RULES, TABLE_TENNIS_BASIC_RULES, TRACKING_RULES]:
+        for rules_path in [BASIC_RULES, TABLE_TENNIS_BASIC_RULES, TRACKING_RULES, SWIMFLOW_RULES]:
             with self.subTest(rules_path=rules_path):
                 self.assertEqual([], validate_schema(load_json(rules_path), schema))
 

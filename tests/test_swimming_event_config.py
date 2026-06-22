@@ -14,6 +14,7 @@ from sportsdata_models.validators.schema import validate_schema
 
 SAMPLE = ROOT / "samples" / "swimming" / "valid" / "2024-JO_Paris_freestyle_hommes_100_finaleA.json"
 NO_VIDEO_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "basic_tracking.json"
+SWIMFLOW_METADATA_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "paris24-men-back-final-100m.json"
 CAMERA_SCHEMA = ROOT / "models" / "schemas" / "common" / "camera.schema.json"
 
 VALID_CAMERA = {
@@ -35,6 +36,18 @@ class SwimmingEventConfigTests(unittest.TestCase):
 
     def test_basic_tracking_sample_without_video_is_valid(self):
         issues = validate_loaded(load_json(NO_VIDEO_SAMPLE), "swimming-event-config")
+        self.assertEqual([], issues)
+
+    def test_swimflow_metadata_sample_is_detected_and_valid(self):
+        issues = validate_loaded(load_json(SWIMFLOW_METADATA_SAMPLE))
+        self.assertEqual([], issues)
+
+    def test_swimflow_metadata_format_declaration_id_is_valid(self):
+        issues = validate_loaded(load_json(SWIMFLOW_METADATA_SAMPLE), "formats.json.swimflow-metadata")
+        self.assertEqual([], issues)
+
+    def test_swimflow_json_format_declaration_id_is_valid(self):
+        issues = validate_loaded(load_json(SWIMFLOW_METADATA_SAMPLE), "formats.json.swimflow")
         self.assertEqual([], issues)
 
     def test_common_camera_schema_accepts_valid_camera(self):

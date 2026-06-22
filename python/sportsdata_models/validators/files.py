@@ -37,6 +37,8 @@ def load_format_declaration(format_id: str) -> dict[str, Any] | None:
 
 
 def detect_format(data: Any) -> str:
+    if isinstance(data, dict) and "dataCSV" in data and "swimmersInfo" in data:
+        return "swimflow-metadata"
     if isinstance(data, dict) and data.get("annotation_simple", {}).get("sport") == "swimming":
         return "swimming-event-config"
     if isinstance(data, list) and all(isinstance(item, dict) and "game_clips" in item for item in data):
@@ -54,7 +56,7 @@ def validate_loaded(data: Any, format_id: str | None = None) -> list[ValidationI
         format_decl = load_format_declaration(selected_format)
         if format_decl and "schema" in format_decl:
             schema_path = format_decl["schema"]
-            schema = load_json(MODELS_ROOT / schema_path)
+            schema = load_json(_resolve_models_ref(schema_path))
             issues = validate_schema(data, schema)
             
             # Apply semantic rules if available
@@ -74,6 +76,10 @@ def validate_loaded(data: Any, format_id: str | None = None) -> list[ValidationI
             issues.extend(validate_swimming_event_config(data))
         return issues
 
+    if selected_format in {"swimflow-metadata", "swimflow-json"}:
+        schema = load_json(MODELS_ROOT / "schemas" / "swimming" / "swimflow-metadata.schema.json")
+        return validate_schema(data, schema)
+
     if selected_format == "table-tennis-match-manifest":
         schema = load_json(MODELS_ROOT / "schemas" / "table-tennis" / "match-manifest.schema.json")
         issues = validate_schema(data, schema)
@@ -87,6 +93,15 @@ def validate_loaded(data: Any, format_id: str | None = None) -> list[ValidationI
         return issues
 
     return [ValidationIssue("$", "unknown sports data format")]
+
+
+def _resolve_models_ref(reference: str) -> Path:
+    path = Path(reference)
+    if path.is_absolute():
+        return path
+    if path.parts and path.parts[0] == "models":
+        return MODELS_ROOT.parent / path
+    return MODELS_ROOT / path
 
 
 def validate_file(path: str | Path, format_id: str | None = None) -> list[ValidationIssue]:
