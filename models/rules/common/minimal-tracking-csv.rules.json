@@ -1,0 +1,35 @@
+{
+  "id": "rules.common.minimal-tracking-csv",
+  "title": "Common minimal tracking CSV",
+  "delimiter": ",",
+  "allowExtraColumns": false,
+  "columns": [
+    {
+      "name": "t",
+      "type": "number",
+      "required": true,
+      "min": 0
+    },
+    {
+      "name": "x",
+      "type": "number",
+      "required": true,
+      "min": 0
+    },
+    {
+      "name": "y",
+      "type": "number",
+      "required": true,
+      "min": 0
+    }
+  ],
+  "groupRules": [
+    {
+      "id": "time-monotonic",
+      "check": "monotonic",
+      "column": "t",
+      "direction": "increasing",
+      "severity": "error"
+    }
+  ]
+}

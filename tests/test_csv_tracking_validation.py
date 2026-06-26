@@ -1,4 +1,5 @@
 import csv
+import copy
 import sys
 import tempfile
 import unittest
@@ -10,15 +11,18 @@ sys.path.insert(0, str(ROOT / "python"))
 
 from sportsdata_models.catalogs import load_json
 from sportsdata_models.validators.csv_rules import detect_csv_format
-from sportsdata_models.validators.files import validate_file
+from sportsdata_models.validators.files import validate_file, validate_loaded
 from sportsdata_models.validators.schema import validate_schema
 
 
 BASIC_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "basic_tracking.csv"
+COMMON_MINIMAL_SAMPLE = ROOT / "samples" / "common" / "valid" / "minimal_tracking.csv"
+COMMON_MINIMAL_METADATA = ROOT / "samples" / "common" / "valid" / "minimal_tracking.json"
 TABLE_TENNIS_BASIC_SAMPLE = ROOT / "samples" / "table-tennis" / "valid" / "basic_tracking.csv"
 TRACKING_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "exemple_annotation_ligne_5_cycles.csv"
 SWIMFLOW_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "paris24-men-back-final-100m.csv"
 BASIC_RULES = ROOT / "models" / "rules" / "swimming" / "basic-tracking-csv.rules.json"
+COMMON_MINIMAL_RULES = ROOT / "models" / "rules" / "common" / "minimal-tracking-csv.rules.json"
 TABLE_TENNIS_BASIC_RULES = ROOT / "models" / "rules" / "table-tennis" / "basic-tracking-csv.rules.json"
 TRACKING_RULES = ROOT / "models" / "rules" / "swimming" / "tracking-csv.rules.json"
 SWIMFLOW_RULES = ROOT / "models" / "rules" / "swimming" / "swimflow-csv.rules.json"
@@ -28,6 +32,23 @@ CSV_RULES_SCHEMA = ROOT / "models" / "schemas" / "common" / "csv-rules.schema.js
 class CsvTrackingValidationTests(unittest.TestCase):
     def test_basic_sample_is_valid(self):
         self.assertEqual([], validate_file(BASIC_SAMPLE))
+
+    def test_common_minimal_tracking_sample_is_detected_and_valid(self):
+        self.assertEqual("common-minimal-tracking-csv", detect_csv_format(COMMON_MINIMAL_SAMPLE))
+        self.assertEqual([], validate_file(COMMON_MINIMAL_SAMPLE))
+        self.assertEqual([], validate_file(COMMON_MINIMAL_SAMPLE, "formats.csv.common-minimal-tracking"))
+
+    def test_common_minimal_tracking_metadata_is_valid(self):
+        self.assertEqual([], validate_file(COMMON_MINIMAL_METADATA))
+        self.assertEqual([], validate_file(COMMON_MINIMAL_METADATA, "formats.json.common-minimal-tracking-metadata"))
+
+    def test_common_minimal_tracking_metadata_uses_sports_catalog(self):
+        data = copy.deepcopy(load_json(COMMON_MINIMAL_METADATA))
+        data["applicableSports"] = ["unknown-sport"]
+
+        issues = validate_loaded(data, "common-minimal-tracking-metadata")
+
+        self.assertTrue(any("$.applicableSports[0]" in str(issue) and "expected one of" in str(issue) for issue in issues))
 
     def test_table_tennis_basic_sample_is_valid(self):
         self.assertEqual([], validate_file(TABLE_TENNIS_BASIC_SAMPLE))
@@ -148,7 +169,7 @@ class CsvTrackingValidationTests(unittest.TestCase):
 
     def test_csv_rule_files_match_schema(self):
         schema = load_json(CSV_RULES_SCHEMA)
-        for rules_path in [BASIC_RULES, TABLE_TENNIS_BASIC_RULES, TRACKING_RULES, SWIMFLOW_RULES]:
+        for rules_path in [BASIC_RULES, COMMON_MINIMAL_RULES, TABLE_TENNIS_BASIC_RULES, TRACKING_RULES, SWIMFLOW_RULES]:
             with self.subTest(rules_path=rules_path):
                 self.assertEqual([], validate_schema(load_json(rules_path), schema))
 
@@ -161,6 +182,20 @@ class CsvTrackingValidationTests(unittest.TestCase):
         issues = validate_file(path, "swimming-basic-tracking-csv")
 
         self.assertTrue(any("missing required column 'time'" in str(issue) for issue in issues))
+
+    def test_common_minimal_tracking_requires_ordered_time(self):
+        path = self._basic_csv(
+            ["t", "x", "y"],
+            [
+                [0, 10, 20],
+                [2, 15, 40],
+                [1, 30, 60],
+            ],
+        )
+
+        issues = validate_file(path, "common-minimal-tracking-csv")
+
+        self.assertTrue(any("$[2].t" in str(issue) and "increasing" in str(issue) for issue in issues))
 
     def test_non_numeric_frame_id_fails(self):
         path = self._basic_csv(BASIC_HEADERS, [["start", 1, "cycle", 0.0, 0.0]])

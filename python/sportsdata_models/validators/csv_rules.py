@@ -15,6 +15,7 @@ from .schema import ValidationIssue
 
 
 BASIC_TRACKING_COLUMNS = ["frameId", "swimmerId", "eventId", "time", "distance"]
+COMMON_MINIMAL_TRACKING_COLUMNS = ["t", "x", "y"]
 TABLE_TENNIS_BASIC_TRACKING_COLUMNS = ["frameId", "playerId", "eventId", "time", "x", "y", "z"]
 SWIMMING_TRACKING_COLUMNS = [
     "frameId",
@@ -83,6 +84,8 @@ SWIMFLOW_DETECTION_COLUMNS = [
 ]
 
 CSV_FORMAT_RULES = {
+    "common-minimal-tracking-csv": MODELS_ROOT / "rules" / "common" / "minimal-tracking-csv.rules.json",
+    "formats.csv.common-minimal-tracking": MODELS_ROOT / "rules" / "common" / "minimal-tracking-csv.rules.json",
     "swimflow-csv": MODELS_ROOT / "rules" / "swimming" / "swimflow-csv.rules.json",
     "swimming-swimflow-csv": MODELS_ROOT / "rules" / "swimming" / "swimflow-csv.rules.json",
     "formats.csv.swimflow": MODELS_ROOT / "rules" / "swimming" / "swimflow-csv.rules.json",
@@ -108,6 +111,8 @@ def detect_csv_format(path: str | Path) -> str:
     headers = _read_headers(path)
     if _has_columns(headers, SWIMFLOW_DETECTION_COLUMNS):
         return "swimflow-csv"
+    if _has_columns(headers, COMMON_MINIMAL_TRACKING_COLUMNS):
+        return "common-minimal-tracking-csv"
     if _has_columns(headers, SWIMMING_TRACKING_COLUMNS):
         return "swimming-tracking-csv"
     if _has_columns(headers, BASIC_TRACKING_COLUMNS):

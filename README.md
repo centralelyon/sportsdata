@@ -18,6 +18,35 @@ samples/         Valid sample files used by tests.
 tests/           Unit tests for catalogs, derivations, schemas, and rules.
 ```
 
+## Minimal Common Tracking
+
+`samples/common/valid/minimal_tracking.csv` is the smallest tracking format shared by all sports for a single moving object:
+
+```csv
+t,x,y
+0,10,20
+1,15,40
+2,30,60
+```
+
+`t` is ordered time. `x` and `y` are positions inside the space described by the paired metadata file, `samples/common/valid/minimal_tracking.json`, which declares the origin and dimensions.
+
+Validate both files from the repository root:
+
+```sh
+PYTHONPATH=python python3 -m sportsdata.validators.cli \
+  samples/common/valid/minimal_tracking.csv \
+  samples/common/valid/minimal_tracking.json
+```
+
+The CSV is detected from its `t,x,y` header. It can also be validated with the declaration id:
+
+```sh
+PYTHONPATH=python python3 -m sportsdata.validators.cli \
+  --format formats.csv.common-minimal-tracking \
+  samples/common/valid/minimal_tracking.csv
+```
+
 ## Metadata Values
 
 The public Python import is `sportsdata`.
@@ -47,6 +76,17 @@ models/catalogs/swimming/distances.overrides.json
 ```
 
 Use `fixes` to correct an existing value by `id`, and `manualValues` to add a new selectable value.
+
+Catalog files are also the contract between UI selectors and validators. A UI can load `models/catalogs/common/sports.json` and turn its values into a sport selector:
+
+```ts
+import { catalogPaths, fetchCatalog, toSelectOptions } from "./web/src/catalogs";
+
+const sports = await fetchCatalog(catalogPaths.common.sports);
+const options = toSelectOptions(sports);
+```
+
+The same catalog ids are used by validation. For example, `samples/common/valid/minimal_tracking.json` lists `applicableSports`, and the validator checks each value against `models/catalogs/common/sports.json`.
 
 ## Model Flow
 
@@ -101,6 +141,8 @@ The Python validators run structural schema checks and sport-specific semantic c
 
 ```sh
 PYTHONPATH=python python3 -m sportsdata.validators.cli \
+  samples/common/valid/minimal_tracking.csv \
+  samples/common/valid/minimal_tracking.json \
   samples/swimming/valid/2024-JO_Paris_freestyle_hommes_100_finaleA.json \
   samples/table-tennis/valid/flat_match.json
 ```

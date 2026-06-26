@@ -1,0 +1,12 @@
+{
+  "id": "rules.common.minimal-tracking-metadata",
+  "title": "Common minimal tracking metadata",
+  "checks": [
+    {
+      "id": "applicable-sports-catalog",
+      "catalog": "common.sports",
+      "path": "$.applicableSports[*]",
+      "severity": "error"
+    }
+  ]
+}

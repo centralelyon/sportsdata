@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "models/schemas/common/minimal-tracking-metadata.schema.json",
+  "title": "Common minimal tracking metadata",
+  "type": "object",
+  "required": [
+    "id",
+    "format",
+    "csvFile",
+    "time",
+    "position",
+    "space"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "minimal_tracking"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "csvFile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "time": {
+      "type": "object",
+      "required": [
+        "column",
+        "unit"
+      ],
+      "properties": {
+        "column": {
+          "type": "string",
+          "enum": [
+            "t"
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "position": {
+      "type": "object",
+      "required": [
+        "xColumn",
+        "yColumn"
+      ],
+      "properties": {
+        "xColumn": {
+          "type": "string",
+          "enum": [
+            "x"
+          ]
+        },
+        "yColumn": {
+          "type": "string",
+          "enum": [
+            "y"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "space": {
+      "type": "object",
+      "required": [
+        "origin",
+        "dimensions"
+      ],
+      "properties": {
+        "origin": {
+          "$ref": "models/schemas/common/geometry.schema.json#/properties/point"
+        },
+        "dimensions": {
+          "type": "object",
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "applicableSports": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

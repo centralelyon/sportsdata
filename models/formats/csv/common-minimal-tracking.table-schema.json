@@ -1,0 +1,6 @@
+{
+  "id": "formats.csv.common-minimal-tracking",
+  "format": "csv",
+  "title": "Common minimal tracking CSV",
+  "rules": "models/rules/common/minimal-tracking-csv.rules.json"
+}

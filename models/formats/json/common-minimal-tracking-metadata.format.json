@@ -1,0 +1,7 @@
+{
+  "id": "formats.json.common-minimal-tracking-metadata",
+  "schema": "models/schemas/common/minimal-tracking-metadata.schema.json",
+  "semanticRules": [
+    "models/rules/common/minimal-tracking-metadata.rules.json"
+  ]
+}

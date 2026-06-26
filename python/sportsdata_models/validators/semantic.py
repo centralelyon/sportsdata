@@ -70,6 +70,14 @@ def validate_table_tennis_match_manifest(data: list[Any]) -> list[ValidationIssu
     return issues
 
 
+def validate_common_minimal_tracking_metadata(data: dict[str, Any]) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+    sports = catalog_ids("common", "sports")
+    for index, sport_id in enumerate(data.get("applicableSports", [])):
+        _expect_catalog_value(issues, f"$.applicableSports[{index}]", sport_id, sports)
+    return issues
+
+
 def _validate_swimming_annotation(annotation: dict[str, Any], root: dict[str, Any]) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     _expect_catalog_value(issues, "$.annotation_simple.sport", annotation.get("sport"), {"swimming"})

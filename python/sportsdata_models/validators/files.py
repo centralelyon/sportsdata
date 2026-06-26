@@ -6,7 +6,11 @@ from typing import Any
 from ..catalogs import MODELS_ROOT, load_json
 from .csv_rules import validate_csv_file
 from .schema import ValidationIssue, validate_schema
-from .semantic import validate_swimming_event_config, validate_table_tennis_match_manifest
+from .semantic import (
+    validate_common_minimal_tracking_metadata,
+    validate_swimming_event_config,
+    validate_table_tennis_match_manifest,
+)
 
 
 def load_format_declaration(format_id: str) -> dict[str, Any] | None:
@@ -37,6 +41,8 @@ def load_format_declaration(format_id: str) -> dict[str, Any] | None:
 
 
 def detect_format(data: Any) -> str:
+    if isinstance(data, dict) and data.get("format") == "minimal_tracking" and "space" in data:
+        return "common-minimal-tracking-metadata"
     if isinstance(data, dict) and "dataCSV" in data and "swimmersInfo" in data:
         return "swimflow-metadata"
     if isinstance(data, dict) and data.get("annotation_simple", {}).get("sport") == "swimming":
@@ -64,8 +70,17 @@ def validate_loaded(data: Any, format_id: str | None = None) -> list[ValidationI
                 for rule_path in format_decl.get("semanticRules", []):
                     if "table-tennis" in rule_path and isinstance(data, list):
                         issues.extend(validate_table_tennis_match_manifest(data))
+                    if "common/minimal-tracking-metadata" in rule_path and isinstance(data, dict):
+                        issues.extend(validate_common_minimal_tracking_metadata(data))
             
             return issues
+
+    if selected_format == "common-minimal-tracking-metadata":
+        schema = load_json(MODELS_ROOT / "schemas" / "common" / "minimal-tracking-metadata.schema.json")
+        issues = validate_schema(data, schema)
+        if isinstance(data, dict):
+            issues.extend(validate_common_minimal_tracking_metadata(data))
+        return issues
 
     if selected_format == "swimming-event-config":
         schema = load_json(MODELS_ROOT / "schemas" / "swimming" / "event-config.schema.json")
