@@ -1,7 +1,7 @@
 {
-  "id": "minimal_tracking",
+  "id": "speed_climbing_minimal_tracking",
   "format": "minimal_tracking",
-  "title": "Minimal tracking",
+  "title": "Speed climbing minimal tracking",
   "csvFile": "minimal_tracking.csv",
   "time": {
     "column": "t",
@@ -17,15 +17,12 @@
       "y": 0
     },
     "dimensions": {
-      "width": 100,
-      "height": 100
+      "width": 3,
+      "height": 15
     },
     "unit": "m"
   },
   "applicableSports": [
-    "swimming",
-    "table-tennis",
-    "boxing",
     "speed-climbing"
   ]
 }

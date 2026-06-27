@@ -11,6 +11,13 @@ from sportsdata_models.derivations import derive_swimming_events
 
 
 class CatalogTests(unittest.TestCase):
+    def test_common_sports_include_minimal_tracking_sports(self):
+        self.assertTrue(
+            {"swimming", "table-tennis", "boxing", "speed-climbing"}.issubset(
+                catalog_ids("common", "sports")
+            )
+        )
+
     def test_catalog_ids_are_unique(self):
         catalogs = [
             ("common", "sports"),

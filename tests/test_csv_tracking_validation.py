@@ -20,6 +20,10 @@ COMMON_MINIMAL_SAMPLE = ROOT / "samples" / "common" / "valid" / "minimal_trackin
 COMMON_MINIMAL_METADATA = ROOT / "samples" / "common" / "valid" / "minimal_tracking.json"
 COMMON_MINIMAL_OUT_OF_BOUNDS_SAMPLE = ROOT / "samples" / "common" / "non_valid" / "minimal_tracking_xy_out_of_bounds.csv"
 COMMON_MINIMAL_BAD_TIME_SAMPLE = ROOT / "samples" / "common" / "non_valid" / "minimal_tracking_negative_descending_time.csv"
+BOXING_MINIMAL_SAMPLE = ROOT / "samples" / "boxing" / "valid" / "minimal_tracking.csv"
+BOXING_MINIMAL_METADATA = ROOT / "samples" / "boxing" / "valid" / "minimal_tracking.json"
+SPEED_CLIMBING_MINIMAL_SAMPLE = ROOT / "samples" / "speed-climbing" / "valid" / "minimal_tracking.csv"
+SPEED_CLIMBING_MINIMAL_METADATA = ROOT / "samples" / "speed-climbing" / "valid" / "minimal_tracking.json"
 TABLE_TENNIS_BASIC_SAMPLE = ROOT / "samples" / "table-tennis" / "valid" / "basic_tracking.csv"
 TRACKING_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "exemple_annotation_ligne_5_cycles.csv"
 SWIMFLOW_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "paris24-men-back-final-100m.csv"
@@ -51,6 +55,22 @@ class CsvTrackingValidationTests(unittest.TestCase):
         issues = validate_loaded(data, "common-minimal-tracking-metadata")
 
         self.assertTrue(any("$.applicableSports[0]" in str(issue) and "expected one of" in str(issue) for issue in issues))
+
+    def test_boxing_inherits_common_minimal_tracking_format(self):
+        self.assertEqual("common-minimal-tracking-csv", detect_csv_format(BOXING_MINIMAL_SAMPLE))
+        self.assertEqual([], validate_file(BOXING_MINIMAL_SAMPLE))
+        self.assertEqual([], validate_file(BOXING_MINIMAL_METADATA))
+        metadata = load_json(BOXING_MINIMAL_METADATA)
+        self.assertEqual({"width": 6.1, "height": 6.1}, metadata["space"]["dimensions"])
+        self.assertEqual("m", metadata["space"]["unit"])
+
+    def test_speed_climbing_inherits_common_minimal_tracking_format(self):
+        self.assertEqual("common-minimal-tracking-csv", detect_csv_format(SPEED_CLIMBING_MINIMAL_SAMPLE))
+        self.assertEqual([], validate_file(SPEED_CLIMBING_MINIMAL_SAMPLE))
+        self.assertEqual([], validate_file(SPEED_CLIMBING_MINIMAL_METADATA))
+        metadata = load_json(SPEED_CLIMBING_MINIMAL_METADATA)
+        self.assertEqual({"width": 3, "height": 15}, metadata["space"]["dimensions"])
+        self.assertEqual("m", metadata["space"]["unit"])
 
     def test_table_tennis_basic_sample_is_valid(self):
         self.assertEqual([], validate_file(TABLE_TENNIS_BASIC_SAMPLE))

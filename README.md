@@ -31,12 +31,20 @@ t,x,y
 
 `t` is ordered time. `x` and `y` are positions inside the space described by the paired metadata file, `samples/common/valid/minimal_tracking.json`, which declares the origin and dimensions.
 
-Validate both files from the repository root:
+Boxing and speed climbing inherit this common format without sport-specific rules. Their tracking examples are under `samples/boxing/valid/` and `samples/speed-climbing/valid/`; each directory contains a CSV and its metadata JSON.
+
+The boxing sample uses the official World Boxing ring interior minimum of `6.10 m x 6.10 m`. The speed-climbing sample represents one official IFSC lane, `3.00 m` wide and `15.00 m` high; a competition speed wall places two such lanes side by side. See [World Boxing Competition Rules, rule 13.12.1](https://worldboxing.org/wp-content/uploads/2024/11/World-Boxing-Competition-Rules-Nov-2024-Approved.pdf) and [IFSC Speed Licence Rules, rules 1.1.1-1.1.2](https://images.ifsc-climbing.org/ifsc/image/private/t_q_good/prd/urwl7n2hnnyvhiwiq0xg.pdf).
+
+Validate the common and sport-specific examples from the repository root:
 
 ```sh
 PYTHONPATH=python python3 -m sportsdata.validators.cli \
   samples/common/valid/minimal_tracking.csv \
-  samples/common/valid/minimal_tracking.json
+  samples/common/valid/minimal_tracking.json \
+  samples/boxing/valid/minimal_tracking.csv \
+  samples/boxing/valid/minimal_tracking.json \
+  samples/speed-climbing/valid/minimal_tracking.csv \
+  samples/speed-climbing/valid/minimal_tracking.json
 ```
 
 The CSV is detected from its `t,x,y` header. It can also be validated with the declaration id:

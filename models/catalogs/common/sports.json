@@ -9,6 +9,14 @@
     {
       "id": "table-tennis",
       "label": "Table tennis"
+    },
+    {
+      "id": "boxing",
+      "label": "Boxing"
+    },
+    {
+      "id": "speed-climbing",
+      "label": "Speed climbing"
     }
   ]
 }
