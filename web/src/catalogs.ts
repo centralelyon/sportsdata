@@ -30,6 +30,12 @@ export const catalogPaths = {
     annotationEvents: "models/catalogs/table-tennis/annotation-events.json",
     clipPatterns: "models/catalogs/table-tennis/clip-patterns.json",
   },
+  boxing: {
+    fieldPresets: "models/catalogs/boxing/field-presets.json",
+  },
+  speedClimbing: {
+    fieldPresets: "models/catalogs/speed-climbing/field-presets.json",
+  },
 } as const;
 
 export async function fetchCatalog(path: string, baseUrl = ""): Promise<Catalog> {

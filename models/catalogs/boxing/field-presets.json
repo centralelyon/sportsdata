@@ -1,0 +1,15 @@
+{
+  "id": "boxing.field-presets",
+  "title": "Boxing field presets",
+  "values": [
+    {
+      "id": "boxing_world_boxing_ring",
+      "label": "World Boxing ring interior",
+      "width": 6.1,
+      "height": 6.1,
+      "unit": "m",
+      "boundary": "inside-ropes",
+      "source": "https://worldboxing.org/wp-content/uploads/2024/11/World-Boxing-Competition-Rules-Nov-2024-Approved.pdf"
+    }
+  ]
+}

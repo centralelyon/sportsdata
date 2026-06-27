@@ -7,3 +7,6 @@ _IMPLEMENTATION_DIR = Path(__file__).resolve().parents[1] / "python" / "sportsda
 __path__ = [str(_IMPLEMENTATION_DIR)]
 
 from sportsdata_models import *  # noqa: F401,F403,E402
+
+
+__version__ = sportsdata_version()

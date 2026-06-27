@@ -9,10 +9,35 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
+import sportsdata
 from sportsdata_models.validators import cli
+from sportsdata_models.version import model_version, sportsdata_version
 
 
 class CliTests(unittest.TestCase):
+    def test_public_api_returns_models_version(self):
+        self.assertEqual(model_version(), sportsdata.model_version())
+
+    def test_public_api_returns_sportsdata_version(self):
+        self.assertEqual(sportsdata_version(), sportsdata.sportsdata_version())
+        self.assertEqual(sportsdata_version(), sportsdata.__version__)
+
+    def test_prints_models_version(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            exit_code = cli.main(["--version"])
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual(f"{model_version()}\n", output.getvalue())
+
+    def test_prints_sportsdata_version(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            exit_code = cli.main(["--sportsdata-version"])
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual(f"{sportsdata_version()}\n", output.getvalue())
+
     def test_module_runs_from_repository_root(self):
         result = subprocess.run(
             [sys.executable, "-m", "sportsdata.validators.cli", "--help"],

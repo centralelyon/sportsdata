@@ -5,6 +5,7 @@ import sys
 import unittest
 
 from ..catalogs import REPO_ROOT
+from ..version import model_version, sportsdata_version
 
 from .files import validate_file
 
@@ -14,7 +15,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("paths", nargs="*", help="Sports data files to validate")
     parser.add_argument("--format", dest="format_id", help="Force a known format id")
     parser.add_argument("--run-tests", action="store_true", help="Run the repository test suite")
+    parser.add_argument("--version", action="store_true", help="Print the models version and exit")
+    parser.add_argument(
+        "--sportsdata-version",
+        action="store_true",
+        help="Print the sportsdata package version and exit",
+    )
     args = parser.parse_args(argv)
+
+    if args.sportsdata_version:
+        print(sportsdata_version())
+        return 0
+
+    if args.version:
+        print(model_version())
+        return 0
 
     if args.run_tests:
         return run_tests()

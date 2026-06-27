@@ -35,6 +35,8 @@ Boxing and speed climbing inherit this common format without sport-specific rule
 
 The boxing sample uses the official World Boxing ring interior minimum of `6.10 m x 6.10 m`. The speed-climbing sample represents one official IFSC lane, `3.00 m` wide and `15.00 m` high; a competition speed wall places two such lanes side by side. See [World Boxing Competition Rules, rule 13.12.1](https://worldboxing.org/wp-content/uploads/2024/11/World-Boxing-Competition-Rules-Nov-2024-Approved.pdf) and [IFSC Speed Licence Rules, rules 1.1.1-1.1.2](https://images.ifsc-climbing.org/ifsc/image/private/t_q_good/prd/urwl7n2hnnyvhiwiq0xg.pdf).
 
+These official spaces are also available as reusable data catalogs in `models/catalogs/boxing/field-presets.json` and `models/catalogs/speed-climbing/field-presets.json`.
+
 Validate the common and sport-specific examples from the repository root:
 
 ```sh
@@ -175,7 +177,38 @@ sportsdata-validate --help
 
 ## Version Bump
 
-Use `runBump.sh` with the target version to update `pyproject.toml`:
+The model version is available as JSON for UIs and other consumers:
+
+```text
+models/version.json
+```
+
+Get the same value from the CLI or Python API:
+
+```sh
+python3 -m sportsdata.validators.cli --version
+```
+
+```py
+import sportsdata
+
+version = sportsdata.model_version()
+```
+
+The sportsdata package version is available separately:
+
+```sh
+python3 -m sportsdata.validators.cli --sportsdata-version
+```
+
+```py
+import sportsdata
+
+version = sportsdata.__version__
+# Equivalent: sportsdata.sportsdata_version()
+```
+
+Use `runBump.sh` with the target version to update both `pyproject.toml` and `models/version.json`:
 
 ```sh
 ./runBump.sh 0.2.0

@@ -1,0 +1,15 @@
+{
+  "id": "speed-climbing.field-presets",
+  "title": "Speed climbing field presets",
+  "values": [
+    {
+      "id": "speed_climbing_ifsc_lane",
+      "label": "IFSC speed wall lane",
+      "width": 3,
+      "height": 15,
+      "unit": "m",
+      "inclinationDegrees": 5,
+      "source": "https://images.ifsc-climbing.org/ifsc/image/private/t_q_good/prd/urwl7n2hnnyvhiwiq0xg.pdf"
+    }
+  ]
+}
