@@ -18,6 +18,8 @@ from sportsdata_models.validators.schema import validate_schema
 BASIC_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "basic_tracking.csv"
 COMMON_MINIMAL_SAMPLE = ROOT / "samples" / "common" / "valid" / "minimal_tracking.csv"
 COMMON_MINIMAL_METADATA = ROOT / "samples" / "common" / "valid" / "minimal_tracking.json"
+COMMON_MINIMAL_OUT_OF_BOUNDS_SAMPLE = ROOT / "samples" / "common" / "non_valid" / "minimal_tracking_xy_out_of_bounds.csv"
+COMMON_MINIMAL_BAD_TIME_SAMPLE = ROOT / "samples" / "common" / "non_valid" / "minimal_tracking_negative_descending_time.csv"
 TABLE_TENNIS_BASIC_SAMPLE = ROOT / "samples" / "table-tennis" / "valid" / "basic_tracking.csv"
 TRACKING_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "exemple_annotation_ligne_5_cycles.csv"
 SWIMFLOW_SAMPLE = ROOT / "samples" / "swimming" / "valid" / "paris24-men-back-final-100m.csv"
@@ -195,6 +197,18 @@ class CsvTrackingValidationTests(unittest.TestCase):
 
         issues = validate_file(path, "common-minimal-tracking-csv")
 
+        self.assertTrue(any("$[2].t" in str(issue) and "increasing" in str(issue) for issue in issues))
+
+    def test_common_minimal_tracking_out_of_bounds_sample_is_invalid(self):
+        issues = validate_file(COMMON_MINIMAL_OUT_OF_BOUNDS_SAMPLE, "common-minimal-tracking-csv")
+
+        self.assertTrue(any("$[1].x" in str(issue) and "<= 100" in str(issue) for issue in issues))
+        self.assertTrue(any("$[2].y" in str(issue) and "<= 100" in str(issue) for issue in issues))
+
+    def test_common_minimal_tracking_bad_time_sample_is_invalid(self):
+        issues = validate_file(COMMON_MINIMAL_BAD_TIME_SAMPLE, "common-minimal-tracking-csv")
+
+        self.assertTrue(any("$[1].t" in str(issue) and ">= 0" in str(issue) for issue in issues))
         self.assertTrue(any("$[2].t" in str(issue) and "increasing" in str(issue) for issue in issues))
 
     def test_non_numeric_frame_id_fails(self):

@@ -47,6 +47,36 @@ PYTHONPATH=python python3 -m sportsdata.validators.cli \
   samples/common/valid/minimal_tracking.csv
 ```
 
+Non-valid examples live under `samples/common/non_valid/`. For example, `minimal_tracking_xy_out_of_bounds.csv` has coordinates outside the `0..100` space:
+
+```sh
+PYTHONPATH=python python3 -m sportsdata.validators.cli \
+  --format formats.csv.common-minimal-tracking \
+  samples/common/non_valid/minimal_tracking_xy_out_of_bounds.csv
+```
+
+```text
+samples/common/non_valid/minimal_tracking_xy_out_of_bounds.csv: 2 issue(s)
+  $[1].x: expected value <= 100
+  $[2].y: expected value <= 100
+```
+
+`minimal_tracking_negative_descending_time.csv` shows negative and descending `t` values:
+
+```sh
+PYTHONPATH=python python3 -m sportsdata.validators.cli \
+  --format formats.csv.common-minimal-tracking \
+  samples/common/non_valid/minimal_tracking_negative_descending_time.csv
+```
+
+```text
+samples/common/non_valid/minimal_tracking_negative_descending_time.csv: 4 issue(s)
+  $[1].t: expected value >= 0
+  $[2].t: expected value >= 0
+  $[1].t: expected increasing values within group
+  $[2].t: expected increasing values within group
+```
+
 ## Metadata Values
 
 The public Python import is `sportsdata`.
@@ -133,6 +163,14 @@ Editable installs also provide the shorter console command:
 
 ```sh
 sportsdata-validate --help
+```
+
+## Version Bump
+
+Use `runBump.sh` with the target version to update `pyproject.toml`:
+
+```sh
+./runBump.sh 0.2.0
 ```
 
 ## Validation

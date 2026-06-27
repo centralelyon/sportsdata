@@ -14,13 +14,15 @@
       "name": "x",
       "type": "number",
       "required": true,
-      "min": 0
+      "min": 0,
+      "max": 100
     },
     {
       "name": "y",
       "type": "number",
       "required": true,
-      "min": 0
+      "min": 0,
+      "max": 100
     }
   ],
   "groupRules": [
